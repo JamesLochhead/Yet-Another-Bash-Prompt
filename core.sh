@@ -33,7 +33,10 @@ prompt_command() {
 	ORIGINAL_RETURN_CODE=$? # must be first
 	RETURN_CODE=""
 
-	[[ $MODULE_RECENT_DIRECTORY_ENABLE ]] && record_recent_dirs
+	if command -v fzf &>/dev/null; then
+		[[ $MODULE_RECENT_DIRECTORY_ENABLE ]] && record_recent_dirs
+	fi
+
 	if ((ORIGINAL_RETURN_CODE != 0)); then
 		RETURN_CODE=" $ORIGINAL_RETURN_CODE"
 	fi
@@ -97,7 +100,8 @@ prompt_command() {
 	# 	echo -en "\033]0;D $process_name\a"
 	# fi
 	SECOND_LINE=$(set_text_foreground_color ">" "38" "5" "33" true)
-	PS1="\n$CWD$GIT_REPOSITORY$GIT_CHECKED_OUT$GIT_STATUS$CURRENT_GCLOUD_IDENTITY$CURRENT_GCLOUD_PROJECT$AWS_REGION$RETURN_CODE\n$SECOND_LINE "
+	CURRENT_HOSTNAME=$(set_text_foreground_color "$(hostname -s)" "38" "5" "33" true)
+	PS1="\n$CURRENT_HOSTNAME $CWD$GIT_REPOSITORY$GIT_CHECKED_OUT$GIT_STATUS$CURRENT_GCLOUD_IDENTITY$CURRENT_GCLOUD_PROJECT$AWS_REGION$RETURN_CODE\n$SECOND_LINE "
 	export PS1
 }
 
